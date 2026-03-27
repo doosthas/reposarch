@@ -8,7 +8,7 @@ const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
   0.1,
-  1000
+  1000,
 );
 
 const aud = document.getElementById('aud');
@@ -44,8 +44,10 @@ scene.add(light2);
 
 let root;
 
+const modelsPath = '/models/basilcurrie/';
+
 const loader = new GLTFLoader();
-loader.load('models/testGLTF.glb', function (glb) {
+loader.load(`${modelsPath}testGLTF.glb`, function (glb) {
   root = glb.scene;
   root.scale.x = 0.2;
   root.scale.y = 0.2;
@@ -140,7 +142,7 @@ function animate() {
   }
 
   window.addEventListener('click', () => {
-    if (root.position.y <= 0) {
+    if (root && root.position.y <= 0) {
       rootvel = 0.03;
     }
     if (aud.muted == true) {
@@ -149,7 +151,7 @@ function animate() {
   });
 
   window.addEventListener('keydown', () => {
-    if (root.position.y <= 0) {
+    if (root && root.position.y <= 0) {
       rootvel = 0.03;
     }
     if (aud.muted == true) {
@@ -157,28 +159,32 @@ function animate() {
     }
   });
 
-  root.position.y += rootvel;
-
-  if (root.position.y >= 0) {
-    rootvel -= gravity;
-  } else {
-    root.position.y = 0;
+  if (root) {
+    root.position.y += rootvel;
   }
 
-  if (cube.position.x < -2.5 && root.position.y == 0) {
-    rootrotation = 0.1;
-    ztranslation = 0.1;
-  }
+  if (root) {
+    if (root.position.y >= 0) {
+      rootvel -= gravity;
+    } else {
+      root.position.y = 0;
+    }
 
-  if (root.position.z > 10) {
-    ztranslation = 0;
-    rootrotation = 0;
-    root.position.z = 0;
-    root.rotation.x = 0;
-  }
+    if (cube.position.x < -2.5 && root.position.y == 0) {
+      rootrotation = 0.1;
+      ztranslation = 0.1;
+    }
 
-  root.rotation.x += rootrotation;
-  root.position.z += ztranslation;
+    if (root.position.z > 10) {
+      ztranslation = 0;
+      rootrotation = 0;
+      root.position.z = 0;
+      root.rotation.x = 0;
+    }
+
+    root.rotation.x += rootrotation;
+    root.position.z += ztranslation;
+  }
   camera.position.x = Math.sin(increment) * 5;
   camera.position.z = Math.cos(increment) * 5;
   camera.position.y = 0.5 - [0.5 * Math.cos(2 * increment)];
